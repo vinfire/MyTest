@@ -2,12 +2,15 @@ package com.example.cameraalbumtest;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int TAKE_PHOTO = 1;
     public static final int CHOOSE_PHOTO =2;
+    public static final String TAG = "camera-album";
     private Button btn_takePhoto;
     private ImageView iv_picture;
     private Uri imageUri;
@@ -47,10 +52,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //创建File对象，用于存储拍照后的照片
+                String absolutePath = getExternalCacheDir().getAbsolutePath();
+                Log.i(TAG, "absolutePath: "+absolutePath);
                 File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
 
                 try {
                     if (outputImage.exists()){
+                        Log.i(TAG, "outputImage is exists ");
                         outputImage.delete();
                     }
                     outputImage.createNewFile();
@@ -59,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (Build.VERSION.SDK_INT >= 24){
+                    Log.i(TAG, "Build.VERSION.SDK_INT >= 24 ");
                     imageUri = FileProvider.getUriForFile(MainActivity.this,"com.example.cameraalbumtest.fileprovider",outputImage);
                 }else {
+                    Log.i(TAG, "Build.VERSION.SDK_INT < 24");
                     imageUri = Uri.fromFile(outputImage);
                 }
 
@@ -76,8 +86,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    Log.i(TAG, "No Permission");
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 }else {
+                    Log.i(TAG, "Hava Permission");
                     openAlbum();
                 }
             }
@@ -120,12 +132,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case CHOOSE_PHOTO:
-                if (requestCode == RESULT_OK){
+                if (resultCode == RESULT_OK){
                     //判断手机的系统版本号
                     if (Build.VERSION.SDK_INT >= 19){
+                        Log.i(TAG, "Build.VERSION.SDK_INT >= 19");
                         //4.4及以上系统使用这个方法处理图片
                         handleImageOnKitKat(data);
                     }else {
+                        Log.i(TAG, "Build.VERSION.SDK_INT < 19");
                         //4.4以下系统使用这个方法处理图片
                         handleImageBeforeKitKat(data);
                     }
@@ -140,10 +154,55 @@ public class MainActivity extends AppCompatActivity {
     private void handleImageOnKitKat(Intent data) {
         String imagePath = null;
         Uri uri = data.getData();
-        
+        if (DocumentsContract.isDocumentUri(this,uri)){
+            Log.i(TAG, "uir--DocumentUri");
+            //如果是document类型的Uri，则通过document id处理
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.downloads.documents".equals(uri.getAuthority())){
+                String id = docId.split(":")[1]; //解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" +id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            }else if ("com.android.providers.download.documents".equals(uri.getAuthority())){
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        }else if ("content".equalsIgnoreCase(uri.getScheme())){
+            Log.i(TAG, "uir--content");
+            //如果是content类型的Uri，直接使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        }else if ("file".equalsIgnoreCase(uri.getScheme())){
+            Log.i(TAG, "uir--file");
+            //如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);
     }
 
     private void handleImageBeforeKitKat(Intent data) {
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri, null);
+        displayImage(imagePath);
+    }
 
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        //通过Uri和selection来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null){
+            if (cursor.moveToFirst()){
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        if (imagePath != null){
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            iv_picture.setImageBitmap(bitmap);
+        }else {
+            Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
+        }
     }
 }

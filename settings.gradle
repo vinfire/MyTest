@@ -1,1 +1,1 @@
-include ':app', ':cameraalbumtest'
+include ':app', ':cameraalbumtest', ':playaudiotest', ':playvideotest', ':webviewtest', ':networktest', ':androidthreadtest', ':servicetest', ':servicebestpractice', ':lbstest'

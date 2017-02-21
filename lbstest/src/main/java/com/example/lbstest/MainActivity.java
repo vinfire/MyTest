@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy); //设置定位模式
+        option.setCoorType("bd09ll"); // 设置返回的定位结果是百度经纬度,默认值gcj02
         option.setScanSpan(10000); //设置更新时间间隔
         option.setIsNeedAddress(true); //需要获取当前位置详细的地址信息
         mLocationClient.setLocOption(option);

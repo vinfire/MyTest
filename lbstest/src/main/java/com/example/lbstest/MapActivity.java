@@ -35,14 +35,15 @@ public class MapActivity extends AppCompatActivity {
 
         mapView = (MapView) findViewById(R.id.bmapView);
         baiduMap = mapView.getMap();
-        baiduMap.setMyLocationEnabled(true);
-//        initLocation();
+        baiduMap.setMyLocationEnabled(true); //让设备的位置在地图上显示
+        initLocation();
         locationClient.start(); //开始定位
     }
 
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy); //设置定位模式
+        option.setCoorType("bd09ll"); // 设置返回的定位结果是百度经纬度,默认值gcj02
         option.setScanSpan(10000); //设置更新时间间隔
         option.setIsNeedAddress(true); //需要获取当前位置详细的地址信息
         locationClient.setLocOption(option);
@@ -98,8 +99,8 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        locationClient.stop();
-        mapView.onDestroy();
+        locationClient.stop(); //避免活动被销毁后，程序持续在后台不断地进行定位，严重消耗手机的电量
+        mapView.onDestroy(); //保证资源能够及时地得到释放
         baiduMap.setMyLocationEnabled(false);
     }
 }

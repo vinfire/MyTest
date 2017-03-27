@@ -1,6 +1,8 @@
 package com.example.materialtest;
 
 import android.app.Activity;
+import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -29,6 +31,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    private boolean isBackPressed;
     private DrawerLayout mDrawerlayout;
 
     private People[] peoples = {
@@ -48,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //初始化状态栏
+        initStatusBar();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //也可以通过代码把action菜单的三个点点换成其他图片
+        //toolbar.setOverflowIcon(BaseUtils.getResImg(com.example.materialtest.R.drawable.ico_success));  
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case android.R.id.home:
+            case android.R.id.home:  //HomeAsUp按钮的id永远都是android.R.id.home
                 mDrawerlayout.openDrawer(GravityCompat.START); //将滑动菜单展示出来
                 break;
             case R.id.bcakup:
@@ -202,4 +211,46 @@ public class MainActivity extends AppCompatActivity {
             // ignore
         }
     }
+
+    private void initStatusBar(){
+        //5.0以下的系统
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            //将侧边栏顶部延伸至status bar
+            mDrawerlayout.setFitsSystemWindows(true);
+            //将主页面顶部延伸至status bar
+            mDrawerlayout.setClipToPadding(false);
+        }
+    }
+
+    //实现双击 Back键 退出
+    @Override
+    public void onBackPressed() {
+        if (mDrawerlayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerlayout.closeDrawer(GravityCompat.START);
+        }else {
+            if (isBackPressed){
+                super.onBackPressed();
+                return;
+            }
+
+            isBackPressed = true;
+
+            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isBackPressed = false;
+                }
+            }, 2000); //两秒内双击 Back 才生效
+        }
+    }
+
+
+
+
+
+
+
+
 }

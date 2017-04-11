@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/androidthreadtest" />
+            <option value="$PROJECT_DIR$/animation" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/cameraalbumtest" />
             <option value="$PROJECT_DIR$/lbstest" />
@@ -17,11 +18,12 @@
             <option value="$PROJECT_DIR$/materialtest" />
             <option value="$PROJECT_DIR$/myutils" />
             <option value="$PROJECT_DIR$/networktest" />
+            <option value="$PROJECT_DIR$/permissiontest" />
             <option value="$PROJECT_DIR$/playaudiotest" />
             <option value="$PROJECT_DIR$/playvideotest" />
             <option value="$PROJECT_DIR$/servicebestpractice" />
             <option value="$PROJECT_DIR$/servicetest" />
-            <option value="$PROJECT_DIR$/webviewtest" />
+            <option value="$PROJECT_DIR$/webviewAndJSTest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

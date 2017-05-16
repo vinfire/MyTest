@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Android状态栏最佳实践:  http://www.see-source.com/blog/300000023/1103.html
+
         //初始化状态栏
         initStatusBar();
 

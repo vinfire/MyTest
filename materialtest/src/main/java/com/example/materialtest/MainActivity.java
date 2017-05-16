@@ -151,12 +151,22 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    /**
+     * 加载Toolbar的菜单文件
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
 
+    /**
+     * 处理Toolbar的各个点击事件
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){

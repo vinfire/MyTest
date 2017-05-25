@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/animation/animation.iml" filepath="$PROJECT_DIR$/animation/animation.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/cameraalbumtest/cameraalbumtest.iml" filepath="$PROJECT_DIR$/cameraalbumtest/cameraalbumtest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chartview/chartview.iml" filepath="$PROJECT_DIR$/chartview/chartview.iml" />
       <module fileurl="file://$PROJECT_DIR$/lbstest/lbstest.iml" filepath="$PROJECT_DIR$/lbstest/lbstest.iml" />
       <module fileurl="file://$PROJECT_DIR$/logintest/logintest.iml" filepath="$PROJECT_DIR$/logintest/logintest.iml" />
       <module fileurl="file://$PROJECT_DIR$/materialtest/materialtest.iml" filepath="$PROJECT_DIR$/materialtest/materialtest.iml" />
